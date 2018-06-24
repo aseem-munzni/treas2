@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<style>
+table,th,td {
+  border : 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+th,td {
+  padding: 5px;
+}
+
+.formOne {
+    background-color: lightblue;
+    padding: 5px;
+}
+
+.employee {
+    background-color: yellow;
+    font-family: "Verdana", Verdana, serif;
+    font-style: italic;
+    padding: 5px;
+}
+
+</style>
+
+<head>
+
+
+<script>
+
+function getBooks() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      showBookTable(this);
+    }
+  };
+  var pGenre = "&genre=" + document.getElementById("selectGenre").value;
+  var pAuthor = "&author=" + document.getElementById("selectAuthor").value;
+  var pEmpId = "&empid=" + document.getElementById("employeeId").value;
+
+  xhttp.open("GET", 
+    "/servlet/BookServer?item=books" + pGenre + pAuthor + pEmpId, 
+    true);
+  xhttp.send();
+}
+function showBookTable(xml) {
+  
+  var xmlDoc = new DOMParser().parseFromString(xml.response,"text/xml");
+  var x = xmlDoc.getElementsByTagName("book");
+
+  var table="<table width=\"90%\"><tr><th>Genre</th><th>Author</th><th>Title</th><th>Price</th><th>ISBN</th></tr>";
+
+  for (var i = 0; i <x.length; i++) {
+    var bookId = x[i].getAttribute("isbn");
+    var genre = x[i].getAttribute("genre");
+    var author = x[i].getAttribute("author");
+    var title = x[i].getAttribute("title");
+    var price = x[i].getAttribute("price");
+    var pages = x[i].getAttribute("pages");
+    var publisher = x[i].getAttribute("publisher");
+    var addlInfo;
+    if(publisher == null && pages == null){
+      addlInfo = bookId;
+    } else {
+      addlInfo =  "<a href=\"details.html?isbn=" + bookId + 
+                  "&genre=" + genre +
+                  "&author=" + author +
+                  "&title=" + title +
+                  "&price=" + price +
+                  "&pages=" + pages +
+                  "&publisher=" + publisher +
+                  "\">" + bookId + "</a>";
+    }
+    table += "<tr>" + 
+              "<td>" + genre + "</td>" + 
+              "<td>" + author + "</td>" + 
+              "<td>" + title + "</td>" +
+              "<td>" + price + "</td>" +
+              "<td>" + addlInfo + "</td>" +
+              "</tr>";
+  }
+
+  table += "</table>";
+  document.getElementById("BookDiv").innerHTML = table;
+
+}
+
+function getGenres() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var selGenre = document.getElementById("selectGenre");
+      var xmlDoc = new DOMParser().parseFromString(this.response,"text/xml");
+      var x = xmlDoc.getElementsByTagName("genre");
+      for (var i = 0; i <x.length; i++) {
+        var optionGenre = document.createElement("option");
+        optionGenre.text = x[i].getAttribute("value");
+        optionGenre.value = x[i].getAttribute("value");
+        selGenre.options.add(optionGenre);
+      }
+    }
+  };
+  xhttp.open("GET", "/servlet/BookServer?item=genres", true);
+  xhttp.send();
+}
+
+function getAuthors() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var selAuthor = document.getElementById("selectAuthor");
+      var xmlDoc = new DOMParser().parseFromString(this.response,"text/xml");
+      var x = xmlDoc.getElementsByTagName("author");
+      for (var i = 0; i <x.length; i++) {
+        var optionAuthor = document.createElement("option");
+        optionAuthor.text = x[i].getAttribute("value");
+        optionAuthor.value = x[i].getAttribute("value");
+        selAuthor.options.add(optionAuthor);
+       }
+    }
+  };
+  xhttp.open("GET", "/servlet/BookServer?item=authors", true);
+  xhttp.send();
+}
+
+function fillDropDowns() { getGenres(); getAuthors(); }
+
+
+</script>
+
+
+</head>
+
+
+
+<body onload="fillDropDowns();">
+
+<h2>Second Treasures Bookstore</h2>
+<h2>Outback Canada</h2>
+
+<div class="employee">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Employee ID
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="text" size="6" maxlength="6" id="employeeId" name="employeeId" />
+</div>
+
+<br>
+
+<div class="formOne">
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select id="selectGenre" name="selectGenre">
+  <option value="ALL" selected>All Genres</option>
+</select>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select id="selectAuthor" name="selectAuthor">
+  <option value="ALL" selected>All Authors</option>
+ </select>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="button" onclick="getBooks()">Find Books</button>
+</div>
+
+<br><br>
+<div id="BookDiv"></div>
+
+
+</body>
+</html>
+
+
+
+

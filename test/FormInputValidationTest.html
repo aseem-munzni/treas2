@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Mocha Tests</title>
+		<link rel="stylesheet" href="node_modules/mocha/mocha.css">
+	
+		<script src="node_modules/mocha/mocha.js"></script>
+		<script src="node_modules/sinon/pkg/sinon-1.12.2.js"></script>
+		<script src="node_modules/chai/chai.js"></script>
+		<script>mocha.setup('bdd')</script>
+		<script src="myapi.js"></script>
+		<script src="test.js"></script>
+
+		<script>
+		var myapi = {
+
+			post: function(data, callback) {
+
+				// TEST 1 : Input Validation
+				// Form input validation test
+				// Check if inputs are non-null, 
+				// Check if inputs are correct type -- numeric, string, etc.
+
+
+
+				// TEST 2 : Actual POST Request
+
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', '/servlet/BookServer', true);
+
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState == 4) {
+						callback();
+					}
+				};
+
+				xhr.send(JSON.stringify(data));
+			}
+		};
+		</script>
+
+	</head>	
+	<body>
+
+		<div id="mocha"></div>
+		<script>
+			mocha.run();
+		</script>
+	</body>
+</html>
+
