@@ -118,9 +118,27 @@ public class BookServer extends HttpServlet {
 
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String isbn = request.getParameter("isbn");
-        books.remove(isbn);
+        if (request != null || response != null) {
+            doTheDeletion(request.getParameter("isbn"));
+        }
     }
+
+    // For testing purposes,
+    // Move business logic into separate function
+    public boolean doTheDeletion(String isbn){
+        if(isbn == null || "".equals(isbn)){
+            // log invalid isbn.
+            return false;
+        }
+        if(books.containsKey(isbn)){
+            books.remove(isbn);
+            return true;
+        } else {
+            // log isbn not found.
+            return false;
+        }
+    }
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String isbn = request.getParameter("isbn");
@@ -144,7 +162,7 @@ public class BookServer extends HttpServlet {
             out.println("<h3>Update Unsuccessful For ISBN #" + isbn + "</h3>");
         }
 
-        out.println("<a href=\"/books/index.html\" >Return to Book List Page</a>" );
+        out.println("<a href=\"/index.html\" >Return to Book List Page</a>" );
         out.println("</body></html>");
         out.flush();
         out.close();

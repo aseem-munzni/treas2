@@ -1,0 +1,34 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+//applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.xml"]
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    provided group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.7'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+    
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.+'
+}
+
+jar {
+    git clone https://github.com/aseem-munzni/treas2.git .
+    javac -cp .:/Users/amunzni/Downloads/javax.servlet-3.1.jar ./servlet/BookServer.java
+}
+
+distZip {
+    into(project.name + "/bin") {
+        from '.'
+        include 'log4j2.xml'
+        include 'proxy.ini'
+    }
+}
